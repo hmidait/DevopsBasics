@@ -1,11 +1,7 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
 - master
 
+# Agent configuration Local to run it locally
 pool:
   name: Local
   demands:
@@ -27,8 +23,9 @@ steps:
 # Copy files from s to a into the artifacts directory
 - task: CopyFiles@2
   inputs:
+    SourceFolder: '$(Agent.BuildDirectory)'
     Contents: '**/.war'
-    TargetFolder: '$(build.artifactstagingdirectory)'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 # Publish Build Artifact to Azure pipelines
 - task: PublishBuildArtifacts@1
