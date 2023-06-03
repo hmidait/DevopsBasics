@@ -24,3 +24,15 @@ steps:
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     goals: 'package'
 
+# Copy files from s to a into the artifacts directory
+- task: CopyFiles@2
+  inputs:
+    Contents: '**/.war'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+# Publish Build Artifact to Azure pipelines
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'allWarFiles'
+    publishLocation: 'Container'
