@@ -1,0 +1,35 @@
+trigger:
+- master
+
+# Agent configuration Local to run it locally
+pool:
+  name: Local
+  demands:
+    - maven
+    - Agent.Version -gtVersion 2.163.1
+
+steps:
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '17.0.7'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package'
+
+# Copy files from s to a into the artifacts directory
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Agent.BuildDirectory)/s'
+    Contents: '**/*.war'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+# Publish Build Artifact to Azure pipelines
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'allWarFiles'
+    publishLocation: 'Container'
